@@ -24,9 +24,37 @@ const App = () =>{
   const getTotalItems = (items: CartItem[]) =>
     items.reduce((ack: number, item: CartItem) => ack + item.amount, 0);
 
-  const handleAddToCart = (clickedItem: CartItem) => null;
+  const handleAddToCart = (clickedItem: CartItem) => {
+    setcartItems(prev => {
+      // 1. Is the item already added in the cart?
+      const isItemInCart = prev.find(item => item.id === clickedItem.id);
 
-  const handleRemoveFromCart = () => null;
+      if (isItemInCart) {
+        return prev.map(item =>
+          item.id === clickedItem.id
+            ? { ...item, amount: item.amount + 1 }
+            : item
+        );
+      }
+
+      // First time the item is added
+      return [ ...prev, {...clickedItem, amount: 1}]
+    })
+  };
+
+  const handleRemoveFromCart = (id: number) => {
+    setcartItems(prev =>
+      prev.reduce((ack, item) => {
+        console.log("🚀 ~ file: App.tsx ~ line 48 ~ prev.reduce ~ ack, item", ack, item)
+        if (item.id === id) {
+          if (item.amount === 1) return ack;
+          return [...ack, { ...item, amount: item.amount - 1 }];
+        } else {
+          return [...ack, item];
+        }
+      }, [] as CartItem[])
+    );
+  };
 
   if (isLoading) return <LinearProgress />;
   
