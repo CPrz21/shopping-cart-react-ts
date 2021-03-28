@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery } from 'react-query';
 // Components
 import Item from './components/Item';
-// import Cart from './Cart/Cart';
+import Cart from './components/Cart';
 import Drawer from '@material-ui/core/Drawer';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Grid from '@material-ui/core/Grid';
@@ -20,11 +20,13 @@ const App = () =>{
   const [cartOpen, setcartOpen] = useState<boolean>(false);
   const [cartItems, setcartItems] = useState<CartItem[]>([]);
   const { data, isLoading, error } = useQuery<Array<CartItem>>('products', getProducts)
-  console.log("🚀 ~ file: App.tsx ~ line 22 ~ App ~ data", data);
 
-  const getTotalItems = (items: CartItem[]) => null;
+  const getTotalItems = (items: CartItem[]) =>
+    items.reduce((ack: number, item: CartItem) => ack + item.amount, 0);
 
   const handleAddToCart = (clickedItem: CartItem) => null;
+
+  const handleRemoveFromCart = () => null;
 
   if (isLoading) return <LinearProgress />;
   
@@ -37,7 +39,11 @@ const App = () =>{
         open={cartOpen}
         onClose={() => setcartOpen(false)}
       >
-        goes here
+        <Cart
+          cartItems={cartItems}
+          addToCart={handleAddToCart}
+          removeFromCart={handleRemoveFromCart}
+        />
       </Drawer>
       <StyledButton onClick={() => setcartOpen(true)}>
         <Badge badgeContent={getTotalItems(cartItems)} color={'error'}>
